@@ -1,0 +1,51 @@
+record_id,account_name,country,owner,opportunity_name,stage,amount_eur,close_date,last_activity_date,email,phone,product,created_date
+CRM-1001,NordLab Diagnostics GmbH,DE,Anna Keller,Hematology analyzer renewal,Negotiation,185000,2026-07-30,2026-06-18,procurement@nordlab.de,+49401234001,XN-2000,2026-03-04
+CRM-1002,Mediscan Klinikverbund,DE,Markus Weber,Multi-site service contract,Proposal,92000,2026-08-15,2026-06-08,it-purchasing@mediscan.de,+49301234002,Service Contract,2026-03-12
+CRM-1003,Helioscope Labs,DE,,Reagent volume agreement,Qualification,48000,2026-07-10,2026-06-02,buying@helioscope-labs.de,+492211234003,Reagents,2026-04-05
+CRM-1004,Alster Private Clinic,DE,Anna Keller,Analyzer replacement project,Prospecting,132000,2026-05-30,2026-03-20,contact@alsterclinic.de,+49401234004,XN-1500,2026-02-11
+CRM-1005,Rheinland Pathology Center,DE,Jonas Richter,Digital morphology pilot,Proposal,76000,,2026-06-11,pathology@rheinland-pc.de,+492211234005,DI-60,2026-04-16
+CRM-1006,Bavaria Blood Bank,DE,Lena Hoffmann,High-throughput line expansion,Negotiation,240000,2026-09-20,,operations@bavaria-blood.de,+49891234006,XN-3100,2026-01-29
+CRM-1007,NordLab Diagnostics GmbH,DE,Anna Keller,Backup analyzer project,Proposal,67000,2026-08-25,2026-06-19,backup@nordlab.de,+49401234007,XN-1000,2026-04-21
+CRM-1008,Charite Research Services,DE,Markus Weber,Research reagent framework,Closed Won,38000,2026-06-12,2026-06-12,research.procurement@charite-rs.de,+49301234008,Reagents,2026-02-25
+CRM-1009,Hanse Clinical Labs,DE,Lena Hoffmann,Service renewal overdue,Negotiation,58000,2026-06-10,2026-04-01,service@hanse-clinical.de,+49401234009,Service Contract,2026-02-28
+CRM-1010,Saxony Diagnostics Network,DE,,Regional analyzer rollout,Prospecting,310000,2026-10-31,2026-05-02,regional@saxony-diagnostics.de,+49351234010,XN-3000,2026-03-17
+CRM-1011,UK North Diagnostics,UK,Oliver Smith,Analyzer replacement FY26,Proposal,175000,2026-09-01,2026-06-14,procurement@uknorthdiag.co.uk,+442071230011,XN-2000,2026-03-03
+CRM-1012,London Hematology Centre,UK,Emma Brown,Managed service renewal,Negotiation,118000,2026-07-05,2026-05-28,commercial@londonhema.co.uk,+442071230012,Managed Service,2026-02-19
+CRM-1013,South Coast Pathology,UK,Oliver Smith,Reagent upsell campaign,Proposal,42000,2026-08-11,2026-06-05,sales@southcoastpathology.co.uk,+442071230013,Reagents,2026-04-09
+CRM-1014,UK North Diagnostics,UK,Oliver Smith,Satellite lab analyzer,Qualification,96000,2026-08-28,2026-06-01,satellite@uknorthdiag.co.uk,+442071230014,XN-1000,2026-04-18
+CRM-1015,Midlands Lab Services,UK,,Service contract recovery,Prospecting,54000,,2026-06-09,service.midlands.co.uk,+442071230015,Service Contract,2026-04-25
+CRM-1016,Oxford Clinical Trials Unit,UK,Emma Brown,Research analyzer tender,Negotiation,205000,2026-05-31,2026-03-10,tenders@oxfordctu.ac.uk,+442071230016,XN-2500,2026-01-30
+CRM-1017,Cardiff Regional Hospital,UK,Oliver Smith,Reagent contract extension,Closed Won,33000,2026-06-15,2026-06-15,procurement@cardiffregional.nhs.uk,+442071230017,Reagents,2026-03-22
+CRM-1018,Manchester Diagnostics Hub,UK,Emma Brown,Automation interface project,Proposal,87000,2026-09-18,2026-04-20,automation@manchesterhub.co.uk,,Middleware,2026-03-28
+CRM-1019,Paris Biomedical Group,FR,Claire Martin,Hematology platform upgrade,Negotiation,198000,2026-08-20,2026-06-10,achats@parisbiomed.fr,+33140000019,XN-2000,2026-02-13
+CRM-1020,Lyon Diagnostic Services,FR,Claire Martin,Reagent agreement renewal,Proposal,64000,2026-07-22,2026-06-07,contact@lyondiagnostics.fr,+33472000020,Reagents,2026-04-01
+CRM-1021,Marseille University Hospital,FR,Julien Moreau,Integrated lab automation,Prospecting,275000,2026-11-15,2026-05-01,lab-automation@marseilleuh.fr,+33491000021,Workflow Automation,2026-03-01
+CRM-1022,Paris Biomedical Group,FR,Claire Martin,Backup analyzer for urgent care,Qualification,82000,2026-09-05,2026-05-30,urgentcare@parisbiomed.fr,+33140000022,XN-1000,2026-04-12
+CRM-1023,Nantes Pathology Network,FR,,Service contract renewal,Negotiation,73000,2026-06-01,2026-04-05,nantes-pathology.fr,+33240000023,Service Contract,2026-02-07
+CRM-1024,Toulouse Clinical Laboratory,FR,Julien Moreau,Analyzer tender support,Proposal,152000,,2026-06-03,tenders@toulouseclinic.fr,+33561000024,XN-1500,2026-04-15
+CRM-1025,Lille Diagnostic Centre,FR,Claire Martin,Reagent forecast alignment,Closed Won,29000,2026-06-18,2026-06-18,forecast@lillediagnostic.fr,+33320000025,Reagents,2026-05-02
+CRM-1026,Bordeaux Lab Alliance,FR,Julien Moreau,Stale high-value opportunity,Negotiation,166000,2026-07-12,2026-03-15,alliance@bordeauxlab.fr,+33556000026,XN-2000,2026-01-22
+CRM-1027,Milano Diagnostics SRL,IT,Sofia Romano,Analyzer replacement program,Proposal,143000,2026-08-30,2026-06-13,acquisti@milanodiagnostics.it,+390212340027,XN-1500,2026-03-07
+CRM-1028,Roma Clinical Labs,IT,Marco Bianchi,Hematology line expansion,Negotiation,221000,2026-09-25,2026-06-04,procurement@romaclinicallabs.it,+390612340028,XN-3000,2026-02-18
+CRM-1029,Veneto Hospital Network,IT,Sofia Romano,Service renewal FY26,Qualification,59000,,2026-05-22,service@venetohospital.it,+390412340029,Service Contract,2026-04-20
+CRM-1030,Napoli Medical Center,IT,,Reagent standardization,Prospecting,47000,2026-08-05,2026-06-16,lab@napolimedical.it,+390812340030,Reagents,2026-05-07
+CRM-1031,Roma Clinical Labs,IT,Marco Bianchi,Satellite lab analyzer,Proposal,99000,2026-10-10,2026-06-09,satellite@romaclinicallabs.it,+390612340031,XN-1000,2026-04-29
+CRM-1032,Torino Pathology Institute,IT,Sofia Romano,Past close date open deal,Negotiation,88000,2026-05-20,2026-04-02,pathology@torinoinstitute.it,+390112340032,DI-60,2026-02-05
+CRM-1033,Madrid Central Diagnostics,ES,Carlos Ruiz,Analyzer tender,Proposal,157000,2026-09-14,2026-06-17,compras@madridcentral.es,+349112340033,XN-2000,2026-03-11
+CRM-1034,Barcelona Lab Group,ES,Lucia Garcia,Reagent framework agreement,Negotiation,68000,2026-07-18,2026-06-01,framework@barcelonalab.es,+349312340034,Reagents,2026-04-04
+CRM-1035,Valencia Hospital Labs,ES,Carlos Ruiz,Service contract renewal,Prospecting,52000,,2026-04-12,service@valencialabs.es,+349612340035,Service Contract,2026-03-16
+CRM-1036,Sevilla Diagnostic Centre,ES,,High-value automation project,Qualification,194000,2026-10-22,,automation@sevilladiag.es,+349542340036,Workflow Automation,2026-02-27
+CRM-1037,Madrid Central Diagnostics,ES,Carlos Ruiz,Backup analyzer,Proposal,74000,2026-08-19,2026-06-12,backup@madridcentral.es,+349112340037,XN-1000,2026-04-24
+CRM-1038,Bilbao Medical Analytics,ES,Lucia Garcia,Invalid contact data case,Negotiation,113000,2026-07-01,2026-03-25,contact-bilbao.es,,XN-1500,2026-01-31
+CRM-1039,Amsterdam Clinical Labs,NL,Noah De Vries,Analyzer refresh project,Proposal,136000,2026-09-08,2026-06-06,procurement@amsterdamclinical.nl,+312012340039,XN-2000,2026-03-15
+CRM-1040,Rotterdam Diagnostics BV,NL,Noah De Vries,Reagent contract extension,Negotiation,72000,2026-07-29,2026-06-20,contract@rotterdamdiagnostics.nl,+311012340040,Reagents,2026-04-08
+CRM-1041,Utrecht Hospital Services,NL,,Service support renewal,Qualification,61000,2026-08-02,2026-06-04,support@utrechthospital.nl,+313012340041,Service Contract,2026-04-19
+CRM-1042,Amsterdam Clinical Labs,NL,Noah De Vries,Emergency analyzer backup,Prospecting,108000,2026-05-28,2026-03-11,emergency@amsterdamclinical.nl,+312012340042,XN-1000,2026-02-14
+CRM-1043,Copenhagen Lab Services,DK,Freja Nielsen,Regional analyzer upgrade,Proposal,164000,2026-10-05,2026-06-15,purchase@copenhagenlabs.dk,+45321234043,XN-2000,2026-03-20
+CRM-1044,Aarhus Hospital Diagnostics,DK,Freja Nielsen,Reagent supply optimization,Negotiation,57000,2026-07-07,2026-05-29,supply@aarhushospital.dk,+45861234044,Reagents,2026-04-03
+CRM-1045,Stockholm Diagnostics AB,SE,Erik Andersson,Hematology automation expansion,Proposal,233000,2026-11-01,2026-06-01,procurement@stockholmdiag.se,+46812340045,Workflow Automation,2026-02-24
+CRM-1046,Gothenburg Medical Labs,SE,Erik Andersson,Service agreement renewal,Qualification,49000,,2026-06-19,service@gothenburglabs.se,+46311234046,Service Contract,2026-05-01
+CRM-1047,Oslo Clinical Diagnostics,NO,Ingrid Hansen,Analyzer replacement,Negotiation,149000,2026-09-12,2026-06-10,purchasing@osloclinical.no,+47211234047,XN-1500,2026-03-09
+CRM-1048,Bergen Hospital Laboratory,NO,,High-value tender without owner,Proposal,187000,2026-08-16,2026-04-01,tender@bergenhospital.no,+47551234048,XN-2000,2026-02-21
+CRM-1049,Vienna Diagnostic Network,AT,Katharina Bauer,Reagent framework renewal,Closed Won,45000,2026-06-09,2026-06-09,procurement@viennadiag.at,+43112340049,Reagents,2026-03-29
+CRM-1050,Zurich Precision Labs,CH,David Meier,Premium analyzer opportunity,Negotiation,260000,2026-12-15,2026-06-05,buying@zurichprecision.ch,+41441234050,XN-3100,2026-01-18

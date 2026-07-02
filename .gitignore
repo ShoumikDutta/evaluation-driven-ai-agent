@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Logs
+*.log
+
+# Streamlit cache
+.streamlit/
+
+# Local databases
+*.db
+
+# Vector DB
+chroma_db/
+faiss_index/
+
+# Model cache
+.cache/
+
+# Power Automate outputs
+audit_logs/
+
+# Generated run artifacts
+traces/*
+!traces/.gitkeep
+evals/results/*
+!evals/results/.gitkeep
+outputs/*
+
+# Keep source/demo CRM data in the repository.
+!data/*.csv

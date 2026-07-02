@@ -1,0 +1,37 @@
+{
+  "project_name": "CRM Data Quality Agent Comparison",
+  "shared_rules": {
+    "read_only": "The system must never update CRM data or send emails. It may only draft recommendations or summaries.",
+    "grounding": "All numeric claims must come from the provided CSV dataset or deterministic tools.",
+    "no_fabrication": "Do not invent customers, amounts, owners, dates, or actions not supported by the dataset.",
+    "human_in_loop": "Any action affecting real systems must be phrased as a human review item.",
+    "structured_output": "Every agent returns JSON with task_type, answer, evidence, actions, flags, confidence, and trace."
+  },
+  "dq_rules": {
+    "missing_required": ["owner", "close_date", "last_activity_date", "email"],
+    "invalid_email_regex": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+    "stale_activity_days": 45,
+    "past_close_date_is_issue_for_open_stages": ["Prospecting", "Qualification", "Proposal", "Negotiation"],
+    "duplicate_account_same_country": true,
+    "high_value_threshold_eur": 100000,
+    "severity": {
+      "missing_owner": "high",
+      "missing_close_date": "high",
+      "past_close_date_open_opp": "high",
+      "missing_last_activity_high_value": "high",
+      "stale_activity_high_value": "high",
+      "invalid_email": "medium",
+      "duplicate_account": "medium",
+      "missing_phone": "low",
+      "stale_activity_low_value": "low"
+    }
+  },
+  "allowed_tools": [
+    "load_crm_records",
+    "data_quality_audit",
+    "pipeline_summary",
+    "find_records",
+    "draft_manager_summary"
+  ],
+  "blocked_tools": ["send_email", "update_crm", "delete_record"]
+}
