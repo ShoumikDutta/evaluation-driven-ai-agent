@@ -5,12 +5,14 @@ import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from statistics import mean
 from typing import Any, Dict, List
 
 from agents.context import clone_shared_context, prepare_shared_context
 from agents.multi_agent import execute_multi_agent
 from agents.schemas import response_to_dict, validate_agent_response
 from agents.single_agent import execute_single_agent
+from evals.config import JUDGE_SCORE_KEYS
 from evals.judge import judge_pairwise
 from evals.metrics import compute_case_metrics, summarize_metrics
 from tools.tool_registry import build_tool_registry
@@ -94,28 +96,80 @@ def public_run(run: Dict[str, Any], response: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def summarize_judge(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
-    counts = {"single": 0, "multi": 0, "tie": 0, "tie_uncertain": 0}
-    score_totals = {
-        "single": {"overall": 0, "count": 0},
-        "multi": {"overall": 0, "count": 0},
-    }
+    counts = {"single": 0, "multi": 0, "tie": 0, "unavailable": 0}
+    judge_vote_totals = {"single": 0, "multi": 0, "tie": 0}
+    score_values = {system: {key: [] for key in JUDGE_SCORE_KEYS} for system in ["single", "multi"]}
+    confidence_values: list[float] = []
+    agreement_values: list[float] = []
+    unavailable_judge_runs = 0
+    total_judge_runs = 0
+
     for row in rows:
-        winner = row["judge"]["winner_system"]
-        counts[winner if winner in counts else "tie_uncertain"] += 1
-        for pass_key, mapping_key in [("pass_1", "label_mapping_pass_1"), ("pass_2", "label_mapping_pass_2")]:
-            mapping = row["judge"][mapping_key]
-            scores = row["judge"][pass_key]["scores"]
-            for label, system in mapping.items():
-                if system in score_totals:
-                    score_totals[system]["overall"] += scores[label]["overall"]
-                    score_totals[system]["count"] += 1
-    averages = {}
-    for system, totals in score_totals.items():
-        averages[system] = round(totals["overall"] / totals["count"], 2) if totals["count"] else 0
+        judge = row["judge"]
+        winner = judge.get("winner_system", "unavailable")
+        counts[winner if winner in counts else "unavailable"] += 1
+
+        aggregation = judge.get("aggregation", {})
+        if aggregation.get("available_judges", 0):
+            agreement_values.append(float(aggregation.get("judge_agreement", 0.0)))
+
+        for result in judge.get("panel_results", []):
+            total_judge_runs += 1
+            if result.get("status") not in {"ok", "Healthy"}:
+                unavailable_judge_runs += 1
+                continue
+            result_winner = result.get("winner")
+            if result_winner in judge_vote_totals:
+                judge_vote_totals[result_winner] += 1
+            confidence_values.append(float(result.get("confidence", 0.0)))
+            for system in ["single", "multi"]:
+                scores = result.get("scores", {}).get(system, {})
+                for key in JUDGE_SCORE_KEYS:
+                    if key in scores:
+                        score_values[system][key].append(float(scores[key]))
+
+    average_scores = {
+        system: {
+            key: round(mean(values), 2) if values else 0.0
+            for key, values in metrics.items()
+        }
+        for system, metrics in score_values.items()
+    }
+
+    available_judge_runs = total_judge_runs - unavailable_judge_runs
+    average_available_judges = round(available_judge_runs / len(rows), 2) if rows else 0.0
+    configured_judges_per_case = round(total_judge_runs / len(rows), 2) if rows else 0.0
+
     return {
         "win_tie_loss_count": counts,
-        "average_overall_scores": averages,
+        "overall_winner": winner_from_counts(counts),
+        "majority_vote": {key: counts[key] for key in ["single", "multi", "tie"]},
+        "judge_vote_totals": judge_vote_totals,
+        "average_confidence": round(mean(confidence_values), 4) if confidence_values else 0.0,
+        "average_judge_agreement": round(mean(agreement_values), 4) if agreement_values else 0.0,
+        "average_judge_agreement_percent": round(mean(agreement_values) * 100) if agreement_values else 0,
+        "average_scores": average_scores,
+        "average_overall_scores": {
+            "single": average_scores["single"]["overall"],
+            "multi": average_scores["multi"]["overall"],
+        },
+        "available_judge_runs": available_judge_runs,
+        "available_judges_text": f"{available_judge_runs} / {total_judge_runs}",
+        "average_available_judges": average_available_judges,
+        "configured_judges_per_case": configured_judges_per_case,
+        "average_available_judges_text": f"{average_available_judges:g} / {configured_judges_per_case:g}",
+        "unavailable_judge_runs": unavailable_judge_runs,
+        "total_judge_runs": total_judge_runs,
     }
+
+
+def winner_from_counts(counts: Dict[str, int]) -> str:
+    available_counts = {key: counts.get(key, 0) for key in ["single", "multi", "tie"]}
+    if not any(available_counts.values()):
+        return "unavailable"
+    best_count = max(available_counts.values())
+    leaders = [winner for winner, count in available_counts.items() if count == best_count]
+    return leaders[0] if len(leaders) == 1 else "tie"
 
 
 def save_eval_results(result: Dict[str, Any]) -> None:
@@ -128,6 +182,10 @@ def save_eval_results(result: Dict[str, Any]) -> None:
     summary_path.write_text(json.dumps(result["summary"], indent=2, ensure_ascii=True), encoding="utf-8")
 
     flat_rows = [flatten_row(row) for row in result["rows"]]
+    if not flat_rows:
+        csv_path.write_text("", encoding="utf-8")
+        return
+
     with csv_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(flat_rows[0].keys()))
         writer.writeheader()
@@ -137,6 +195,8 @@ def save_eval_results(result: Dict[str, Any]) -> None:
 def flatten_row(row: Dict[str, Any]) -> Dict[str, Any]:
     metrics = row["metrics"]
     judge = row["judge"]
+    aggregation = judge.get("aggregation", {})
+    average_scores = aggregation.get("average_scores", {})
     return {
         "case_id": row["case"]["id"],
         "category": row["case"]["category"],
@@ -163,6 +223,13 @@ def flatten_row(row: Dict[str, Any]) -> Dict[str, Any]:
         "status_correct_multi": metrics["status_correct_multi"],
         "judge_winner_system": judge["winner_system"],
         "judge_mode": judge["judge_mode"],
+        "judge_panel": ";".join(judge.get("judge_panel", [])),
+        "judge_majority_vote": json.dumps(aggregation.get("majority_vote", {}), ensure_ascii=True),
+        "judge_agreement_percent": aggregation.get("judge_agreement_percent", 0),
+        "judge_average_confidence": aggregation.get("average_confidence", 0.0),
+        "judge_unavailable": ";".join(aggregation.get("unavailable_judges", [])),
+        "single_judge_overall": average_scores.get("single", {}).get("overall", 0.0),
+        "multi_judge_overall": average_scores.get("multi", {}).get("overall", 0.0),
         "single_trace_path": row["single"]["trace_path"],
         "multi_trace_path": row["multi"]["trace_path"],
     }

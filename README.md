@@ -104,66 +104,94 @@ Each case includes expected behavior, required tools, forbidden actions, and ref
 
 The deterministic harness calculates schema validity, latency, tool-call count, required-tool use, forbidden-action risk, human-approval correctness, and status correctness. Summary metrics include average latency, average tool calls, schema validity rate, tool accuracy rate, prompt-injection pass rate, and human-approval pass rate.
 
-## LLM-as-Judge And Judge Panel
+## LLM-as-a-Judge Pipeline
 
-`evals/judge.py` runs pairwise judging without revealing which response is single-agent or multi-agent. For every case it randomizes A/B labels, judges once, swaps positions, judges again, and only accepts a winner if both passes agree after mapping labels back to systems. Otherwise the result is `tie_uncertain`.
+The evaluation subsystem uses three independent cloud LLM judges: Google Gemini, Groq, and Cerebras. Each provider receives the same judging prompt and returns structured JSON for the existing majority-vote aggregator.
 
-By default the judge runs in deterministic mock mode so demos work without an API key.
+```mermaid
+flowchart TD
+E[Eval Case] --> S[Single-Agent Response]
+E --> M[Multi-Agent Response]
+S --> P[Shared Evaluation Prompt]
+M --> P
+P --> G[Gemini Judge]
+P --> GR[Groq Judge]
+P --> C2[Cerebras Judge]
+G --> A[Majority Vote Aggregator]
+GR --> A
+C2 --> A
+A --> OUT[Dashboard + CSV/JSON Results]
+```
 
-For a judge panel, set `JUDGE_PANEL` to comma-separated `provider:model` entries. Supported providers are `mock`, `ollama`, `openai`, `gemini`, `groq`, and `openrouter`.
+Evaluation flow:
 
-Example free/local-first panel:
+1. The harness runs the single-agent and multi-agent systems on the same eval case.
+2. `evals/prompt.py` builds one shared judge prompt containing the original user prompt, both structured responses, expected behavior, required tools, and forbidden actions.
+3. `evals/judge.py` calls the cloud judge panel configured in `llm_judge/judge.py`.
+4. Each judge must return valid JSON matching the shared judge schema.
+5. `evals/aggregator.py` computes the majority winner, average confidence, average scores, and judge agreement percentage.
+6. If one judge is unavailable, the run continues with the remaining judges and the dashboard displays provider health and diagnostics.
 
-```powershell
-$env:JUDGE_PANEL="mock,ollama:llama3.1:8b,gemini:gemini-3.5-flash,groq:llama-3.1-8b-instant"
+Configure the providers in `.env`:
+
+```env
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-3.5-flash
+
+GROQ_API_KEY=
+GROQ_MODEL=llama-3.3-70b-versatile
+
+CEREBRAS_API_KEY=
+CEREBRAS_MODEL=gpt-oss-120b
+```
+
+Run the eval harness:
+
+```bash
 python run_eval_harness.py
 ```
 
-For local development, copy `.env.example` to `.env` and fill in only the keys you use. `.env` is ignored by git.
+Example judge JSON:
 
-Optional OpenAI judge:
-
-```powershell
-$env:JUDGE_PROVIDER="openai"
-$env:OPENAI_API_KEY="your-key"
-$env:OPENAI_MODEL="your-model"
-python run_eval_harness.py
+```json
+{
+  "provider": "Gemini",
+  "model": "gemini-3.5-flash",
+  "winner": "multi",
+  "confidence": 0.94,
+  "single": {
+    "accuracy": 4,
+    "completeness": 4,
+    "reasoning": 4,
+    "instruction_following": 5,
+    "hallucination": 5,
+    "tool_use": 4,
+    "overall": 4
+  },
+  "multi": {
+    "accuracy": 5,
+    "completeness": 5,
+    "reasoning": 5,
+    "instruction_following": 5,
+    "hallucination": 5,
+    "tool_use": 5,
+    "overall": 5
+  },
+  "reasoning": "The multi-agent response is more complete while remaining grounded."
+}
 ```
 
-Optional Gemini judge:
+Majority vote example:
 
-```powershell
-$env:JUDGE_PROVIDER="gemini"
-$env:GEMINI_API_KEY="your-key"
-$env:GEMINI_MODEL="gemini-3.5-flash"
-python run_eval_harness.py
-```
+| Judge | Winner | Confidence |
+| ----- | ------ | ---------- |
+| Gemini | Multi | 94% |
+| Groq | Tie | 81% |
+| Cerebras | Multi | 91% |
 
-Optional Groq judge:
+Final winner: `multi`. Agreement: `66%`.
 
-```powershell
-$env:JUDGE_PROVIDER="groq"
-$env:GROQ_API_KEY="your-key"
-$env:GROQ_MODEL="llama-3.1-8b-instant"
-python run_eval_harness.py
-```
-
-Optional OpenRouter judge:
-
-```powershell
-$env:JUDGE_PROVIDER="openrouter"
-$env:OPENROUTER_API_KEY="your-key"
-$env:OPENROUTER_MODEL="provider/model-id:free"
-python run_eval_harness.py
-```
-
-Optional Ollama judge:
-
-```powershell
-$env:JUDGE_PROVIDER="ollama"
-$env:OLLAMA_MODEL="llama3.1:8b"
-python run_eval_harness.py
-```
+The provider boundary is intentionally modular, so additional cloud or local judges can be added without changing the evaluation pipeline or aggregation logic.
 
 ## Interpreting Results
 
@@ -182,10 +210,10 @@ Tests cover schema validation, both agent paths, guardrails, eval-case loading, 
 ## Known Limitations
 
 - The CRM tools are deterministic and intentionally small for a capstone demo.
-- The default judge is mock/deterministic unless you configure OpenAI or Ollama.
+- Cloud judging depends on at least one configured provider API key.
 - The app saves local trace and eval files but never updates CRM data or sends email.
 - Human approval is represented as structured output, not a real approval workflow.
 
 ## Demo Backup Plan
 
-If network or API access fails, leave `JUDGE_PROVIDER` unset. The app and eval harness still run in mock mode and save CSV/JSON results for the presentation.
+If a cloud judge is unavailable, the eval harness continues with the remaining judges and records that provider's health status. For a demo machine, verify the configured API keys before presenting and run `python run_eval_harness.py` once to pre-generate CSV/JSON results.

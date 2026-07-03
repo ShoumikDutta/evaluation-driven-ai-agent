@@ -161,13 +161,13 @@ cat evals/results/eval_results.csv | head -5
 - A: "Both systems performed equally on correctness. The trade-off is latency and tool-call count. Multi-agent adds ~5-10ms overhead for coordination but gives better explainability in traces. For a 10-second overall response time, it's negligible."
 
 **Q4: "Can you scale this to 1000 CRM records or 100 prompts?"**
-- A: "The evaluation harness scales linearly. 20 cases × 2 systems × N judges = 40N evaluations. Right now it's mock judges (instant). With real LLMs it takes ~5-10 seconds per case. To run 1000 cases, you'd want parallel execution or cached results."
+- A: "The evaluation harness scales linearly. 20 cases × 2 systems × N local judges. It runs the judge panel concurrently, and for much larger batches you would add caching and queue-based parallelism."
 
 **Q5: "What if the systems gave different answers?"**
 - A: "Then I'd dig into the traces. The tool-call history is saved in JSON. I'd check: Did one system skip a tool? Did one system misinterpret the data? Did the prompt routing fail in multi-agent? The transparency is the point."
 
 **Q6: "What would you do differently if you had more time?"**
-- A: "Three things: (1) Integrate real LLM judges (OpenAI, Gemini) instead of mock judges, (2) Test with real CRM data from a company (currently synthetic), (3) Add prompt optimization—maybe single-agent just needs a better prompt to compete with multi-agent."
+- A: "Three things: (1) Test with real CRM data from a company, (2) add prompt optimization, and (3) make the judge interface interchangeable with hosted models if a production team wants external review."
 
 ---
 
